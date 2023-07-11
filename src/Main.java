@@ -104,15 +104,19 @@ public class Main {
     // method to display the array as number list
     private static void displayNumberedItems() {
         // iterates through array and numbers the elements and prints out a numbered list of elements
-        for (int i = 0; i < menuArrayList.size(); i++) {
-            System.out.println((i + 1) + ". " + menuArrayList.get(i));
+        if (menuArrayList.isEmpty()) {
+            System.out.println("The list/array is empty.");
+        } else {
+            for (int i = 0; i < menuArrayList.size(); i++) {
+                System.out.println((i + 1) + ". " + menuArrayList.get(i));
+            }
         }
     }
 
     // method to open list
     private static void openListFile() {
         if (saved) {
-            String prompt = "Would you like to open a new list?";
+            String prompt = "Would you like to open a new list? (Y/N): ";
             boolean deleteListYN = SafeInput.getYNConfirm(in, prompt);
             if (!deleteListYN) {
                 return;
