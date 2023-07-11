@@ -1,12 +1,18 @@
-import java.util.ArrayList; // import array for menu
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Scanner;
-
 public class Main {
 
     // initialize the array list used for the menu
     static ArrayList<String> menuArrayList = new ArrayList<>();
     // initialize the scanner for user input
     static Scanner in = new Scanner(System.in);
+    // initialize variable to check state of list if it is saved/not saved
+    static boolean saved = false;
     public static void main(String[] args) {
 
         // initialize variable for quitting/continuing
@@ -31,13 +37,13 @@ public class Main {
                     exitProgram = confirmExit();
                     break;
                 case "O": // if user enters O or o, it will open the list file from disk
-                //    openListFile();
+                    openListFile();
                     break;
                 case "S": // if user enters S or s, it will save the list file to disk
                 //    saveListFile();
                     break;
                 case "C": // if user enters C or c, it will erase all elements from the current list
-                    removeAllElements();
+                    removeAllElements(menuArrayList);
                     break;
                 default: // default case in event user input is invalid and safe input methods do not catch invalid inputs as intended
                     System.out.println("Invalid choice. Please try again.");
@@ -98,9 +104,46 @@ public class Main {
         }
     }
 
+    // method to open list
+    private static void openListFile() {
+        if (saved) {
+            String prompt = "Would you like to open a new list?";
+            boolean deleteListYN = SafeInput.getYNConfirm(in, prompt);
+            if (!deleteListYN) {
+                return;
+            }
+        }
+
+        Scanner inFile;
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+        chooser.setFileFilter(filter);
+        String line;
+
+        Path target = Paths.get(System.getProperty("user.dir")).resolve("src");
+        chooser.setCurrentDirectory(target.toFile());
+
+        try {
+            if (chooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
+                target = chooser.getSelectedFile().toPath();
+                inFile = new Scanner(target);
+                System.out.println("Opened " + target.getFileName());
+                while (inFile.hasNextLine()) {
+                    line = inFile.nextLine();
+                    menuArrayList.add(line);
+                }
+                inFile.close();
+            } else { // user did not select a file
+                System.out.println("Please select a new file");
+            }
+        } catch (IOException e) {
+            System.out.println("IOException Error");
+        }
+    }
+
     // method to clear all elements from current list
-    private static void removeAllElements() {
-        menuArrayList.clear(); // clear out array/list
+    private static void removeAllElements(ArrayList<String> arrayList) {
+        arrayList.clear(); // clear out array/list
         System.out.println("All elements erased from current list/array."); // print out that all elements were erased
     }
 
