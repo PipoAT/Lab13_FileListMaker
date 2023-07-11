@@ -1,6 +1,7 @@
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -12,7 +13,7 @@ public class Main {
     // initialize the scanner for user input
     static Scanner in = new Scanner(System.in);
     // initialize variable to check state of list if it is saved/not saved
-    static boolean saved = false;
+    static boolean saved = true;
     public static void main(String[] args) {
 
         // initialize variable for quitting/continuing
@@ -24,11 +25,13 @@ public class Main {
             String choice = SafeInput.getRegExString(in, "Please enter your menu selection (A, D, V, Q, O, S, C): ","[AaDdVvQqOoSsCc]");
             // switch case structure based on user input to select menu option, will run desired method
             switch (choice.toUpperCase()) {
-                case "A": // if user enters A or a, it will allow user to add to list or array
+                case "A": // if user enters a or A, it will allow user to add to list or array
                     addItem();
+                    saved = false;
                     break;
                 case "D": // if user enters D or d, it will allow user to delete item from list or array
                     deleteItem();
+                    saved = false;
                     break;
                 case "V": // if user enters V or v, it will print out list/array
                     viewList();
@@ -40,10 +43,12 @@ public class Main {
                     openListFile();
                     break;
                 case "S": // if user enters S or s, it will save the list file to disk
-                //    saveListFile();
+                    saveListFile(menuArrayList, "test.txt");
+                    saved = true;
                     break;
                 case "C": // if user enters C or c, it will erase all elements from the current list
                     removeAllElements(menuArrayList);
+                    saved = false;
                     break;
                 default: // default case in event user input is invalid and safe input methods do not catch invalid inputs as intended
                     System.out.println("Invalid choice. Please try again.");
@@ -136,6 +141,32 @@ public class Main {
             } else { // user did not select a file
                 System.out.println("Please select a new file");
             }
+        } catch (IOException e) {
+            System.out.println("IOException Error");
+        }
+    }
+
+    // method to save unsaved list/array
+    public static void saveListFile(ArrayList<String> arrList, String fileName)
+    {
+        PrintWriter outFile;
+        Path target = Paths.get(System.getProperty("user.dir")).resolve("src");
+        if (fileName.equals(""))
+        {
+            target = target.resolve("list.txt");
+        }else
+        {
+            target = target.resolve(fileName);
+        }
+
+        try
+        {
+            outFile = new PrintWriter(target.toString());
+            for (String s : arrList) {
+                outFile.println(s);
+            }
+            outFile.close();
+            System.out.printf("File \"%s\" saved!\n", target.getFileName());
         } catch (IOException e) {
             System.out.println("IOException Error");
         }
