@@ -40,9 +40,6 @@ public class Main {
                     break;
                 case "Q": // if user enters Q or q, it will ask to confirm their exit
                     exitProgram = confirmExit();
-                    if (exitProgram && !saved) { // save the current list if not saved
-                        saveListFile(menuArrayList, fileName);
-                    }
                     break;
                 case "O": // if user enters O or o, it will open the list file from disk
                     openListFile();
@@ -104,7 +101,7 @@ public class Main {
     // method to confirm user wanting to exit program
     private static boolean confirmExit() {
         // returns the user input of True (Yes) or False (No)
-        return SafeInput.getYNConfirm(in,"Are you sure you want to quit? Any unsaved lists will save. (Y/N): ");
+        return SafeInput.getYNConfirm(in,"Are you sure you want to quit? Any unsaved lists will NOT save. Please save the data before proceeding if needed. (Y/N): ");
     }
 
     // method to display the array as number list
@@ -122,19 +119,17 @@ public class Main {
     // method to open list
     private static void openListFile() {
         if (saved) {
-            String prompt = "Would you like to open a new list? (Y/N): "; // asks the user if they want to open new list
+            String prompt = "All data was saved. Would you like to open a new list? (Y/N): "; // asks the user if they want to open new list
             boolean deleteListYN = SafeInput.getYNConfirm(in, prompt); // safe input of yes/no (T/F)
             if (!deleteListYN) {
                 return;
             }
         } else {
-            String prompt = "Your currently open list will save. Would you like to open a new list? (Y/N): "; // asks the user if they want to open new list
+            String prompt = "Your currently open list will not save. Please save the data before proceeding. Would you like to open a new list? (Y/N): "; // asks the user if they want to open new list
             boolean deleteListYN = SafeInput.getYNConfirm(in, prompt); // safe input of yes/no (T/F)
             if (!deleteListYN) {
                 return;
             }
-            // saves current list and safe deletes from array within program
-            saveListFile(menuArrayList, fileName);
             removeAllElements(menuArrayList);
         }
 
